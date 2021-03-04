@@ -1,19 +1,19 @@
-import { withStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React from "react";
 import CreateTodo from "./CreateTodo";
 import TodoList from "./TodoList";
 
-const styles = {
+const useStyles = makeStyles({
     container:{
         display: 'grid',
-        gridTemplateColumns: '1fr repeat(4, 2fr) 1fr',
-        gridTemplateRows: '1fr repeat(4, 2fr) 1fr',
+        gridTemplateColumns: '1fr repeat(6, 2fr) 1fr',
+        gridTemplateRows: '1fr repeat(5, 2fr) 1fr',
         height: '100vh',
     },
-};
+});
 
-const TodoApp = (props) => {
-  const { classes } = props;
+const TodoApp = () => {
+  const  classes  = useStyles();
   return (
     <div className={classes.container}>
       <CreateTodo />
@@ -22,4 +22,4 @@ const TodoApp = (props) => {
   );
 };
 
-export default withStyles(styles)(TodoApp);
+export default TodoApp;

@@ -1,46 +1,66 @@
-import { Button, Card, CardActions, CardContent, Paper, Typography, withStyles } from "@material-ui/core";
+import { makeStyles, Paper, Typography } from "@material-ui/core";
 import React from "react";
+import { connect } from "react-redux";
+import { visibilityTypes } from "../redux/actions/actions";
+import Todo from "./Todo";
+import VisibilitySwitcher from "./VisibilitySwitcher";
 
-const styles = {
+const useStyles = makeStyles({
   container: {
-    gridRow: "2/6",
-    gridColumn: "3/5",
+    gridRow: "2/7",
+    gridColumn: "3/7",
     marginTop: "20px",
+    display: "grid",
+    gridTemplateRows: "5em 1fr",
   },
+  todosContainer: {
+    gridRow: "2/3",
+    margin: "1em 1em",
+    overflowY: 'auto',
+  },
+  noTodosText: {
+    textAlign: 'center',
+    marginTop: '50px',
+  }
+});
+
+const mapStateToProps = (state) => {
+  return {
+    todos: state.todos,
+    visibilityType: state.setVisibility,
+  };
 };
 
 const TodoList = (props) => {
-  const { classes } = props;
+  const classes = useStyles();
+  const { todos, visibilityType } = props;
+
+  const filterTodosByVisibility = (todos) => {
+    if(visibilityType === visibilityTypes.SHOW_ACTIVE){
+      return todos.filter((todo) => !todo.completed);
+    }
+    else if(visibilityType === visibilityTypes.SHOW_COMPLETED){
+      return todos.filter((todo) => todo.completed);
+    }
+    else{
+      return todos;
+    }
+  }
 
   return (
     <Paper className={classes.container}>
-      <Card className={classes.root} variant="outlined">
-        <CardContent>
-          <Typography
-            className={classes.title}
-            color="textSecondary"
-            gutterBottom
-          >
-            Word of the Day
-          </Typography>
-          <Typography variant="h5" component="h2">
-            benevolent
-          </Typography>
-          <Typography className={classes.pos} color="textSecondary">
-            adjective
-          </Typography>
-          <Typography variant="body2" component="p">
-            well meaning and kindly.
-            <br />
-            {'"a benevolent smile"'}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small">Learn More</Button>
-        </CardActions>
-      </Card>
+      <VisibilitySwitcher />
+      <div className={classes.todosContainer}>
+        {todos.length === 0 ? (
+          <Typography variant="h6" className={classes.noTodosText}>No todos left, Its fun time!</Typography>
+        ) : (
+          filterTodosByVisibility(todos).map((todo, index) => {
+            return <Todo index={index} content={todo.content} isCompleted={todo.completed}/>;
+          })
+        )}
+      </div>
     </Paper>
   );
 };
 
-export default withStyles(styles)(TodoList);
+export default connect(mapStateToProps)(TodoList);
